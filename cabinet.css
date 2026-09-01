@@ -1,0 +1,506 @@
+/* Stage 2 — the card catalog cabinet. Walnut + brass, all in CSS. */
+
+:root {
+  --design-w: 1001px;
+  --design-h: 635px;
+
+  --walnut-dark: #2b1a10;
+  --walnut-mid: #3d2617;
+  --walnut-face-hi: #5a3a24;
+  --walnut-face-lo: #341f10;
+
+  --brass-hi: #e0be6e;
+  --brass-mid: #b8912f;
+  --brass-lo: #7d5f1f;
+  --patina: rgba(96, 116, 78, 0.35);
+  --rust: rgba(74, 46, 22, 0.5);
+
+  --label-paper: #efe6d0;
+  --label-ink: #4a3a28;
+
+  --postit: #f4e26b;
+  --postit-edge: #d9c53f;
+  --card-paper: #f6f1e4;
+  --card-ink: #2c2216;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #0c0806;
+}
+
+body {
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
+    Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- The room the cabinet sits in --- */
+.room {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 80% at 50% 18%, #241813 0%, #140c08 55%, #0a0605 100%);
+}
+
+.stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--design-w);
+  height: var(--design-h);
+  transform-origin: center center;
+  transform: translate(-50%, -50%) scale(1);
+  /* scale set by cabinet.js */
+}
+
+/* --- Cabinet casing --- */
+.cabinet {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0 18px;
+  border-radius: 10px;
+  background-color: var(--walnut-mid);
+  background-image:
+    radial-gradient(140% 60% at 20% 0%, rgba(255, 210, 160, 0.06), transparent 60%),
+    radial-gradient(120% 50% at 85% 100%, rgba(0, 0, 0, 0.28), transparent 55%),
+    repeating-linear-gradient(92deg,
+      rgba(0, 0, 0, 0.16) 0 1px, rgba(0, 0, 0, 0) 1px 4px,
+      rgba(255, 226, 190, 0.04) 4px 5px, rgba(0, 0, 0, 0) 5px 11px,
+      rgba(0, 0, 0, 0.09) 11px 12px, rgba(0, 0, 0, 0) 12px 23px),
+    repeating-linear-gradient(90deg,
+      rgba(0, 0, 0, 0.20) 0 1px, rgba(0, 0, 0, 0) 1px 37px),
+    linear-gradient(178deg, #4a3120 0%, #351f12 55%, #29160c 100%);
+  box-shadow:
+    0 2px 0 rgba(255, 235, 205, 0.06) inset,
+    0 40px 90px rgba(0, 0, 0, 0.7),
+    0 8px 24px rgba(0, 0, 0, 0.55);
+}
+
+.cabinet-top,
+.cabinet-base {
+  position: relative;
+  width: calc(100% + 36px);
+  margin-left: -18px;
+  background-image: linear-gradient(180deg, #4c331f, #2a1810);
+  box-shadow: 0 1px 0 rgba(255, 235, 205, 0.05) inset;
+}
+.cabinet-top {
+  height: 26px;
+  border-radius: 10px 10px 0 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+}
+.cabinet-base {
+  height: 40px;
+  border-radius: 0 0 10px 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.45);
+  box-shadow:
+    0 1px 0 rgba(255, 235, 205, 0.05) inset,
+    0 -6px 14px rgba(0, 0, 0, 0.4) inset;
+}
+
+/* --- Drawer grid: always 4 x 4, never re-flows --- */
+.drawers {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 7px;
+  height: calc(var(--design-h) - 26px - 40px);
+  padding: 14px 0;
+  perspective: 1400px;
+}
+
+/* --- A drawer --- */
+.drawer {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border-radius: 4px;
+  outline: none;
+}
+
+.drawer-face {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  height: 100%;
+  padding: 10px 12px 14px;
+  border-radius: 4px;
+  background-image:
+    radial-gradient(90% 70% at 30% 15%, rgba(255, 214, 170, 0.09), transparent 70%),
+    repeating-linear-gradient(90.6deg,
+      rgba(0, 0, 0, 0.11) 0 1px, rgba(0, 0, 0, 0) 1px 5px,
+      rgba(255, 228, 194, 0.045) 5px 6px, rgba(0, 0, 0, 0) 6px 13px,
+      rgba(0, 0, 0, 0.06) 13px 14px, rgba(0, 0, 0, 0) 14px 27px),
+    linear-gradient(178deg, var(--walnut-face-hi) 0%, #402713 55%, var(--walnut-face-lo) 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 234, 202, 0.10) inset,
+    0 -3px 7px rgba(0, 0, 0, 0.45) inset,
+    0 2px 5px rgba(0, 0, 0, 0.4);
+  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 180ms ease;
+  transform-style: preserve-3d;
+}
+
+/* faint tone variation so the 16 faces don't look printed */
+.drawer:nth-child(3n) .drawer-face { filter: brightness(0.96) saturate(1.04); }
+.drawer:nth-child(4n) .drawer-face { filter: brightness(1.04); }
+.drawer:nth-child(7n) .drawer-face { filter: brightness(0.93) hue-rotate(-4deg); }
+
+/* Hover — drawer eases forward for a peek */
+.drawer:hover .drawer-face,
+.drawer:focus-visible .drawer-face {
+  transform: translateY(5px) scale(1.018);
+  box-shadow:
+    0 1px 0 rgba(255, 234, 202, 0.12) inset,
+    0 -3px 7px rgba(0, 0, 0, 0.4) inset,
+    0 12px 22px rgba(0, 0, 0, 0.5);
+}
+.drawer:focus-visible .drawer-face {
+  outline: 2px solid var(--brass-hi);
+  outline-offset: 2px;
+}
+
+/* Open — drawer pulls out toward the viewer */
+.drawer.is-open .drawer-face {
+  transform: translateY(16px) translateZ(60px) scale(1.06);
+  box-shadow:
+    0 1px 0 rgba(255, 234, 202, 0.12) inset,
+    0 -3px 7px rgba(0, 0, 0, 0.4) inset,
+    0 34px 46px rgba(0, 0, 0, 0.6);
+}
+
+/* Brass label holder */
+.label-holder {
+  position: relative;
+  width: 82%;
+  max-width: 190px;
+  padding: 4px;
+  border-radius: 3px;
+  background-image: linear-gradient(180deg, var(--brass-hi), var(--brass-mid) 48%,
+    var(--brass-lo) 52%, var(--brass-mid) 100%);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.35),
+    0 1px 2px rgba(0, 0, 0, 0.5),
+    0 1px 0 rgba(255, 240, 200, 0.35) inset;
+}
+.label-holder::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 3px;
+  background:
+    radial-gradient(circle at 22% 30%, var(--patina), transparent 45%),
+    radial-gradient(circle at 82% 75%, var(--rust), transparent 40%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+.label-text {
+  display: block;
+  padding: 5px 4px;
+  border-radius: 1px;
+  background: var(--label-paper);
+  color: var(--label-ink);
+  font-size: 12px;
+  line-height: 1.15;
+  font-variant: small-caps;
+  letter-spacing: 0.06em;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* Small brass cup pull */
+.pull {
+  width: 46px;
+  height: 15px;
+  border-radius: 3px 3px 22px 22px / 3px 3px 13px 13px;
+  background-image: linear-gradient(180deg, var(--brass-hi) 0%, var(--brass-mid) 40%,
+    var(--brass-lo) 75%, #5f4818 100%);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.4),
+    0 2px 3px rgba(0, 0, 0, 0.55),
+    0 1px 0 rgba(255, 240, 200, 0.4) inset,
+    0 -4px 6px rgba(0, 0, 0, 0.35) inset;
+  position: relative;
+}
+.pull::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 70% 80%, var(--rust), transparent 55%);
+  mix-blend-mode: multiply;
+}
+
+/* --- Overlay + open drawer tray --- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+}
+.overlay[hidden] { display: none; }
+
+.overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(14, 8, 5, 0.74);
+  backdrop-filter: blur(2px);
+  animation: fade 200ms ease;
+}
+
+.tray {
+  position: relative;
+  width: min(94vw, 1120px);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  padding: 0 0 18px;
+  background-image:
+    repeating-linear-gradient(92deg,
+      rgba(0, 0, 0, 0.12) 0 2px, rgba(0, 0, 0, 0) 2px 6px,
+      rgba(255, 228, 194, 0.03) 6px 8px, rgba(0, 0, 0, 0) 8px 16px),
+    linear-gradient(180deg, #3f2818 0%, #26160d 100%);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 2px 0 rgba(255, 235, 205, 0.06) inset,
+    0 40px 80px rgba(0, 0, 0, 0.7);
+  animation: rise 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tray-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+}
+.tray-label {
+  padding: 6px 16px;
+  border-radius: 3px;
+  background-image: linear-gradient(180deg, var(--brass-hi), var(--brass-mid) 48%,
+    var(--brass-lo) 52%, var(--brass-mid) 100%);
+  color: #2e2410;
+  font-size: 17px;
+  font-variant: small-caps;
+  letter-spacing: 0.08em;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 240, 200, 0.4) inset;
+}
+.tray-close {
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+  padding: 7px 16px;
+  border-radius: 3px;
+  font: inherit;
+  font-size: 13px;
+  font-variant: small-caps;
+  letter-spacing: 0.08em;
+  color: #f0e6cf;
+  background-image: linear-gradient(180deg, #4c331f, #2a1810);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(255, 235, 205, 0.08) inset;
+}
+.tray-close:hover { color: #fff; }
+.tray-close:focus-visible { outline: 2px solid var(--brass-hi); outline-offset: 2px; }
+
+.tray-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px 20px;
+  justify-content: center;
+  padding: 26px 20px 8px;
+  overflow-y: auto;
+}
+
+.tray-empty {
+  color: #b8a888;
+  font-size: 15px;
+  font-variant: small-caps;
+  letter-spacing: 0.06em;
+  padding: 30px;
+}
+
+/* --- Reference card (flips) --- */
+.rcard {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  width: 252px;
+  height: 366px;
+  perspective: 1000px;
+  font: inherit;
+  text-align: left;
+}
+.rcard:focus-visible { outline: 2px solid var(--brass-hi); outline-offset: 4px; border-radius: 4px; }
+
+.rcard-inner {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  transform-style: preserve-3d;
+}
+.rcard.is-flipped .rcard-inner { transform: rotateY(180deg); }
+
+.rcard-front,
+.rcard-back {
+  position: absolute;
+  inset: 0;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 3px;
+  background: var(--card-paper);
+  color: var(--card-ink);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+}
+
+/* Front — post-it on a ruled index card */
+.rcard-front {
+  padding: 0 0 16px;
+  background-image:
+    linear-gradient(var(--card-paper), var(--card-paper)),
+    repeating-linear-gradient(180deg, transparent 0 27px, rgba(70, 90, 130, 0.14) 27px 28px);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.rcard-front::before {
+  content: "";
+  position: absolute;
+  left: 26px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(190, 70, 70, 0.3);
+}
+.postit {
+  position: relative;
+  margin: 16px 14px 0;
+  padding: 12px 12px 14px;
+  background: var(--postit);
+  border-bottom: 2px solid var(--postit-edge);
+  transform: rotate(-1.4deg);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.28);
+}
+.postit::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -7px;
+  width: 46px;
+  height: 14px;
+  transform: translateX(-50%) rotate(2deg);
+  background: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+.postit-text {
+  display: block;
+  font-size: 12.5px;
+  line-height: 1.28;
+  color: #5a4a1c;
+  font-weight: 600;
+}
+.rcard-hint {
+  position: absolute;
+  bottom: 10px;
+  right: 12px;
+  font-size: 10px;
+  font-variant: small-caps;
+  letter-spacing: 0.1em;
+  color: #9a8f7a;
+}
+
+/* Back — the detail */
+.rcard-back {
+  transform: rotateY(180deg);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.rcard-media {
+  flex: 0 0 auto;
+  height: 116px;
+  background: #201812;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.rcard-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rcard-media .noimg {
+  font-size: 10px;
+  font-variant: small-caps;
+  letter-spacing: 0.12em;
+  color: #7c7060;
+}
+.rcard-fields {
+  flex: 1 1 auto;
+  padding: 12px 14px 14px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rc-line { font-size: 12px; line-height: 1.4; }
+.rc-key {
+  display: block;
+  font-size: 9px;
+  font-variant: small-caps;
+  letter-spacing: 0.14em;
+  color: #9a8b74;
+  margin-bottom: 1px;
+}
+.rc-source { color: #4a4030; }
+.rc-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
+.rc-tag {
+  appearance: none;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  background: #ece3cf;
+  color: #4a3a28;
+  font: inherit;
+  font-size: 10.5px;
+  font-variant: small-caps;
+  letter-spacing: 0.05em;
+  padding: 2px 7px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.rc-tag:hover { background: #ddd0b2; }
+.rc-tag:focus-visible { outline: 2px solid var(--brass-mid); outline-offset: 1px; }
+
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer-face, .rcard-inner { transition: none; }
+  .overlay-backdrop, .tray { animation: none; }
+}
+
+@media (max-width: 640px) {
+  .rcard { width: 214px; height: 340px; }
+  .tray-cards { gap: 18px 14px; padding: 20px 12px 6px; }
+  .rcard-media { height: 96px; }
+}

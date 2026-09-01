@@ -2,30 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Reference Book — Card Catalog (Stage 1)</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Card Catalog</title>
+  <link rel="stylesheet" href="cabinet.css" />
 </head>
 <body>
-  <main class="page">
-    <header class="page-head">
-      <h1>Card Catalog</h1>
-      <p class="sub">Stage 1 — plain list &amp; tag filters. One reference = one card; tags place it in many drawers.</p>
-    </header>
+  <div class="room">
+    <div class="stage" id="stage">
+      <div class="cabinet" id="cabinet">
+        <div class="cabinet-top"></div>
+        <div class="drawers" id="drawers"></div>
+        <div class="cabinet-base"></div>
+      </div>
+    </div>
+  </div>
 
-    <div id="warnings" class="warnings" hidden></div>
-
-    <section class="filters-section">
-      <h2 class="section-title">Drawers</h2>
-      <div id="filters" class="filters"></div>
-    </section>
-
-    <p id="meta" class="meta"></p>
-    <section id="list" class="list"></section>
-  </main>
+  <div class="overlay" id="overlay" hidden>
+    <div class="overlay-backdrop" data-close></div>
+    <div class="tray" role="dialog" aria-modal="true" aria-labelledby="trayLabel">
+      <div class="tray-head">
+        <span class="tray-label" id="trayLabel"></span>
+        <button class="tray-close" id="trayClose" type="button" data-close>Close</button>
+      </div>
+      <div class="tray-cards" id="trayCards"></div>
+    </div>
+  </div>
 
   <script src="drawers.js"></script>
   <script src="cards.js"></script>
-  <script src="app.js"></script>
+  <script src="cabinet.js"></script>
 </body>
 </html>
