@@ -4,11 +4,10 @@
   --design-w: 1001px;
   --design-h: 635px;
 
-  --paper: #f4f0e4;
-  --paper-deep: #ebe5d4;
-  --graphite: #46413c;
-  --graphite-soft: #6b645c;
-  --postit: #f6e79a;
+  --paper: #efe6d2;
+  --paper-deep: #e5d8bf;
+  --graphite: #4b3a28;
+  --graphite-soft: #7a6446;
   --ink-hand: "Caveat", "Kalam", "Bradley Hand", cursive;
   --ink-body: "Kalam", "Caveat", "Comic Sans MS", cursive;
 
@@ -38,7 +37,7 @@ body {
   inset: 0;
   overflow: hidden;
   background:
-    radial-gradient(130% 90% at 50% 30%, #f8f5ec 0%, var(--paper) 55%, var(--paper-deep) 100%);
+    radial-gradient(130% 90% at 50% 30%, #f4ecd9 0%, var(--paper) 55%, var(--paper-deep) 100%);
 }
 .room::before {
   content: "";
@@ -63,9 +62,9 @@ body {
 
 .cabinet-frame {
   position: absolute;
-  inset: -14px;
-  width: calc(100% + 28px);
-  height: calc(100% + 28px);
+  inset: -18px;
+  width: calc(100% + 36px);
+  height: calc(100% + 36px);
   overflow: visible;
   pointer-events: none;
 }
@@ -91,7 +90,21 @@ body {
   font: inherit;
   color: inherit;
   cursor: pointer;
-  transition: transform 140ms ease;
+  transform: rotate(var(--rot, 0deg));
+  transition: transform 160ms ease, filter 160ms ease;
+  filter: drop-shadow(2px 3.5px 2.5px rgba(58, 42, 26, 0.2));
+}
+/* cut-paper lift on hover / open — soft, no hard edge */
+.drawer:hover {
+  transform: rotate(var(--rot, 0deg)) translateY(-3px) scale(1.02);
+  filter: drop-shadow(3px 7px 5px rgba(58, 42, 26, 0.26));
+}
+.drawer:focus-visible {
+  transform: rotate(var(--rot, 0deg)) translateY(-3px) scale(1.02);
+  outline: none;
+}
+.drawer.is-open {
+  transform: rotate(var(--rot, 0deg)) translateY(-2px) scale(1.03);
 }
 
 .drawer-ink {
@@ -119,11 +132,7 @@ body {
   pointer-events: none;
 }
 
-/* Hover — a light nudge, as if tugging the drawer. No shadow. */
-.drawer:hover { transform: translateY(4px) rotate(-0.3deg); }
-.drawer:focus-visible { outline: none; }
 .drawer:focus-visible .drawer-label { text-decoration: underline wavy var(--graphite-soft); }
-.drawer.is-open { transform: translateY(9px); }
 
 /* --- Overlay: an opened drawer laid on the page --- */
 .overlay {
@@ -149,21 +158,12 @@ body {
   max-height: 88vh;
   display: flex;
   flex-direction: column;
-  background: var(--paper);
+  background: transparent;
   animation: rise 200ms ease;
-}
-.tray::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: var(--grain);
-  background-size: 160px 160px;
-  mix-blend-mode: multiply;
-  opacity: 0.5;
-  pointer-events: none;
 }
 .tray-ink {
   position: absolute;
+  z-index: 0;
   inset: -12px;
   width: calc(100% + 24px);
   height: calc(100% + 24px);
@@ -172,6 +172,8 @@ body {
 }
 
 .tray-head {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -199,6 +201,8 @@ body {
 .tray-close:focus-visible { outline: 2px dashed var(--graphite-soft); outline-offset: 2px; }
 
 .tray-cards {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   gap: 26px 22px;
@@ -223,7 +227,7 @@ body {
   margin: 0;
   cursor: pointer;
   width: 250px;
-  height: 344px;
+  height: 372px;
   perspective: 1100px;
   font: inherit;
 }
@@ -244,24 +248,27 @@ body {
   inset: 0;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  background: #faf7ee;
+  background: transparent;
   overflow: hidden;
 }
+.no-ink .rcard-face { background: #faf7ee; }
 .rcard-ink {
   position: absolute;
+  z-index: 0;
   inset: -10px;
   width: calc(100% + 20px);
   height: calc(100% + 20px);
   overflow: visible;
   pointer-events: none;
 }
+.rcard-face > .rcard-media,
+.rcard-face > .rcard-fields { position: relative; z-index: 1; }
+.rcard-face > .postit,
+.rcard-face > .rcard-hint { z-index: 1; }
 
 /* Front — a ruled index card with a post-it */
 .rcard-front {
   padding: 40px 20px 20px;
-  background-image:
-    repeating-linear-gradient(180deg, transparent 0 28px, rgba(90, 110, 150, 0.13) 28px 29px);
-  background-position: 0 44px;
 }
 .postit {
   position: absolute;
@@ -287,7 +294,7 @@ body {
   font-weight: 600;
   font-size: 20px;
   line-height: 1.15;
-  color: #5b4a1f;
+  color: #5a4326;
 }
 .rcard-hint {
   position: absolute;
@@ -307,9 +314,9 @@ body {
   gap: 9px;
 }
 .rcard-media {
-  height: 98px;
+  height: 84px;
   border: 0;
-  background: #efe9da;
+  background: #ece3cf;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -371,7 +378,7 @@ body {
 }
 
 @media (max-width: 640px) {
-  .rcard { width: 214px; height: 300px; }
+  .rcard { width: 214px; height: 330px; }
   .tray-cards { gap: 20px 16px; padding: 12px 14px 20px; }
   .tray-label { font-size: 25px; }
 }
