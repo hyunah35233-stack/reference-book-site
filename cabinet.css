@@ -1,31 +1,20 @@
-/* Stage 2 — the card catalog cabinet. Walnut + brass, all in CSS. */
+/* Stage 2 — hand-drawn card catalog. Pencil + coloured-pencil, no skeuomorphism. */
 
 :root {
   --design-w: 1001px;
   --design-h: 635px;
 
-  --walnut-dark: #2b1a10;
-  --walnut-mid: #3d2617;
-  --walnut-face-hi: #5a3a24;
-  --walnut-face-lo: #341f10;
+  --paper: #f4f0e4;
+  --paper-deep: #ebe5d4;
+  --graphite: #46413c;
+  --graphite-soft: #6b645c;
+  --postit: #f6e79a;
+  --ink-hand: "Caveat", "Kalam", "Bradley Hand", cursive;
+  --ink-body: "Kalam", "Caveat", "Comic Sans MS", cursive;
 
-  --brass-hi: #cbb072;
-  --brass-mid: #a98d3f;
-  --brass-lo: #6f5824;
-  --patina: rgba(96, 116, 78, 0.4);
-  --rust: rgba(70, 44, 22, 0.55);
-
-  --label-paper: #ece2c9;
-  --label-ink: #46372a;
-
-  --postit: #f2df66;
-  --postit-edge: #d6c23c;
-  --card-paper: #f4efe0;
-  --card-ink: #2c2216;
-
-  /* Procedural walnut grain (SVG feTurbulence, rasterised once, reused). */
-  --wood:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1000' height='620'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.0034 0.022' numOctaves='4' seed='11' result='n'/%3E%3CfeColorMatrix in='n' type='matrix' values='0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 0 0 0 1' result='s'/%3E%3CfeComponentTransfer in='s' result='c'%3E%3CfeFuncR type='table' tableValues='0.10 0.265 0.135 0.205 0.115 0.235 0.105'/%3E%3CfeFuncG type='table' tableValues='0.048 0.145 0.07 0.115 0.058 0.128 0.048'/%3E%3CfeFuncB type='table' tableValues='0.026 0.086 0.04 0.07 0.032 0.078 0.027'/%3E%3C/feComponentTransfer%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.008 0.012' numOctaves='2' seed='5' result='wp'/%3E%3CfeDisplacementMap in='c' in2='wp' scale='22' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.35'/%3E%3C/filter%3E%3Crect width='1000' height='620' filter='url(%23w)'/%3E%3C/svg%3E");
+  /* Faint paper tooth, tiled. */
+  --grain:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 
 * { box-sizing: border-box; }
@@ -34,22 +23,32 @@ html, body {
   margin: 0;
   height: 100%;
   overflow: hidden;
-  background: #0c0806;
 }
 
 body {
-  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
-    Georgia, serif;
+  background: var(--paper);
+  color: var(--graphite);
+  font-family: var(--ink-body);
   -webkit-font-smoothing: antialiased;
 }
 
-/* --- The room the cabinet sits in --- */
+/* --- Sketchbook page --- */
 .room {
   position: fixed;
   inset: 0;
   overflow: hidden;
   background:
-    radial-gradient(120% 80% at 50% 18%, #241813 0%, #140c08 55%, #0a0605 100%);
+    radial-gradient(130% 90% at 50% 30%, #f8f5ec 0%, var(--paper) 55%, var(--paper-deep) 100%);
+}
+.room::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--grain);
+  background-size: 160px 160px;
+  mix-blend-mode: multiply;
+  opacity: 0.55;
+  pointer-events: none;
 }
 
 .stage {
@@ -60,208 +59,73 @@ body {
   height: var(--design-h);
   transform-origin: center center;
   transform: translate(-50%, -50%) scale(1);
-  /* scale set by cabinet.js */
 }
 
-/* --- Cabinet casing --- */
-.cabinet {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  padding: 0 16px;
-  border-radius: 7px;
-  background-color: #241207;
-  background-image:
-    linear-gradient(180deg, rgba(255, 218, 178, 0.05), transparent 20%, rgba(0, 0, 0, 0.4) 100%),
-    var(--wood);
-  background-size: auto, 1220px 760px;
-  background-position: center, center;
-  background-repeat: no-repeat;
-  box-shadow:
-    0 1px 0 rgba(255, 235, 205, 0.05) inset,
-    0 0 60px rgba(0, 0, 0, 0.5) inset,
-    0 40px 90px rgba(0, 0, 0, 0.7),
-    0 8px 24px rgba(0, 0, 0, 0.55);
+.cabinet-frame {
+  position: absolute;
+  inset: -14px;
+  width: calc(100% + 28px);
+  height: calc(100% + 28px);
+  overflow: visible;
+  pointer-events: none;
 }
 
-.cabinet-top,
-.cabinet-base {
-  position: relative;
-  width: calc(100% + 32px);
-  margin-left: -16px;
-  background-color: #241207;
-  background-image:
-    linear-gradient(180deg, rgba(255, 218, 178, 0.06), rgba(0, 0, 0, 0.45)),
-    var(--wood);
-  background-size: auto, 1220px 300px;
-  background-position: center top, center;
-  background-repeat: no-repeat;
-  box-shadow: 0 1px 0 rgba(255, 235, 205, 0.05) inset;
-}
-.cabinet-top {
-  height: 26px;
-  border-radius: 10px 10px 0 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
-}
-.cabinet-base {
-  height: 40px;
-  border-radius: 0 0 10px 10px;
-  border-top: 1px solid rgba(0, 0, 0, 0.45);
-  box-shadow:
-    0 1px 0 rgba(255, 235, 205, 0.05) inset,
-    0 -6px 14px rgba(0, 0, 0, 0.4) inset;
-}
-
-/* --- Drawer grid: always 4 x 4, never re-flows --- */
+/* --- Drawer grid: always 4 x 4, scaled as one unit, never re-flows --- */
 .drawers {
+  position: absolute;
+  inset: 0;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(4, 1fr);
-  gap: 7px;
-  height: calc(var(--design-h) - 26px - 40px);
-  padding: 14px 0;
-  perspective: 1400px;
+  grid-template-columns: repeat(4, 223px);
+  grid-template-rows: repeat(4, 132px);
+  gap: 18px;
+  place-content: center;
 }
 
-/* --- A drawer --- */
 .drawer {
+  position: relative;
   appearance: none;
   border: 0;
   padding: 0;
+  margin: 0;
   background: transparent;
   font: inherit;
   color: inherit;
   cursor: pointer;
-  border-radius: 4px;
-  outline: none;
+  transition: transform 140ms ease;
 }
 
-.drawer-face {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
+.drawer-ink {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  padding: 10px 12px 14px;
-  border-radius: 3px;
-  background-color: #2c1a0e;
-  background-image:
-    linear-gradient(179deg, rgba(255, 226, 190, 0.09), transparent 40%, rgba(0, 0, 0, 0.2) 100%),
-    var(--wood);
-  background-size: auto, 760px 460px;
-  background-position: center, 25% 35%;
-  background-repeat: no-repeat;
-  box-shadow:
-    0 1px 0 rgba(255, 234, 202, 0.08) inset,
-    0 -2px 6px rgba(0, 0, 0, 0.4) inset,
-    0 2px 4px rgba(0, 0, 0, 0.4);
-  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 180ms ease;
-  transform-style: preserve-3d;
-}
-
-/* Each drawer samples a different patch of the grain, like a separate board.
-   Percentage positions always cover (image is larger than the face). */
-.drawer:nth-child(4n+1) .drawer-face { background-position: center, 12% 20%; }
-.drawer:nth-child(4n+2) .drawer-face { background-position: center, 68% 74%; }
-.drawer:nth-child(4n+3) .drawer-face { background-position: center, 40% 8%; }
-.drawer:nth-child(4n)   .drawer-face { background-position: center, 88% 52%; }
-.drawer:nth-child(n+5):nth-child(-n+8)   .drawer-face { background-position-y: 62%; }
-.drawer:nth-child(n+9):nth-child(-n+12)  .drawer-face { background-position-y: 30%; }
-.drawer:nth-child(n+13) .drawer-face { background-position-y: 90%; }
-
-/* Hover — drawer eases forward for a peek */
-.drawer:hover .drawer-face,
-.drawer:focus-visible .drawer-face {
-  transform: translateY(5px) scale(1.018);
-  box-shadow:
-    0 1px 0 rgba(255, 234, 202, 0.12) inset,
-    0 -3px 7px rgba(0, 0, 0, 0.4) inset,
-    0 12px 22px rgba(0, 0, 0, 0.5);
-}
-.drawer:focus-visible .drawer-face {
-  outline: 2px solid var(--brass-hi);
-  outline-offset: 2px;
-}
-
-/* Open — drawer pulls out toward the viewer */
-.drawer.is-open .drawer-face {
-  transform: translateY(16px) translateZ(60px) scale(1.06);
-  box-shadow:
-    0 1px 0 rgba(255, 234, 202, 0.12) inset,
-    0 -3px 7px rgba(0, 0, 0, 0.4) inset,
-    0 34px 46px rgba(0, 0, 0, 0.6);
-}
-
-/* Brass label holder */
-.label-holder {
-  position: relative;
-  width: 82%;
-  max-width: 190px;
-  padding: 4px;
-  border-radius: 2px;
-  background-color: var(--brass-mid);
-  background-image: linear-gradient(177deg,
-    var(--brass-hi) 0%, var(--brass-mid) 38%, var(--brass-lo) 60%, #8a7233 100%);
-  box-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.4),
-    0 1px 2px rgba(0, 0, 0, 0.45),
-    0 1px 0 rgba(255, 240, 200, 0.22) inset;
-}
-.label-holder::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 3px;
-  background:
-    radial-gradient(circle at 18% 25%, var(--patina), transparent 42%),
-    radial-gradient(circle at 86% 78%, var(--rust), transparent 38%),
-    radial-gradient(circle at 60% 50%, rgba(0, 0, 0, 0.14), transparent 60%);
-  mix-blend-mode: multiply;
+  overflow: visible;
   pointer-events: none;
 }
-.label-text {
-  display: block;
-  padding: 5px 4px;
-  border-radius: 1px;
-  background: var(--label-paper);
-  color: var(--label-ink);
-  font-size: 12px;
-  line-height: 1.15;
-  font-variant: small-caps;
-  letter-spacing: 0.06em;
-  text-align: center;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-}
 
-/* Small brass cup pull */
-.pull {
-  width: 46px;
-  height: 15px;
-  border-radius: 2px 2px 22px 22px / 2px 2px 13px 13px;
-  background-color: var(--brass-mid);
-  background-image: linear-gradient(180deg, var(--brass-hi) 0%, var(--brass-mid) 38%,
-    var(--brass-lo) 72%, #52401b 100%);
-  box-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.45),
-    0 2px 3px rgba(0, 0, 0, 0.5),
-    0 1px 0 rgba(255, 240, 200, 0.25) inset,
-    0 -4px 6px rgba(0, 0, 0, 0.3) inset;
-  position: relative;
-}
-.pull::after {
-  content: "";
+.drawer-label {
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(circle at 70% 80%, var(--rust), transparent 55%);
-  mix-blend-mode: multiply;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(var(--tilt, -1deg));
+  width: 90%;
+  text-align: center;
+  font-family: var(--ink-hand);
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.0;
+  color: var(--graphite);
+  letter-spacing: 0.01em;
+  pointer-events: none;
 }
 
-/* --- Overlay + open drawer tray --- */
+/* Hover — a light nudge, as if tugging the drawer. No shadow. */
+.drawer:hover { transform: translateY(4px) rotate(-0.3deg); }
+.drawer:focus-visible { outline: none; }
+.drawer:focus-visible .drawer-label { text-decoration: underline wavy var(--graphite-soft); }
+.drawer.is-open { transform: translateY(9px); }
+
+/* --- Overlay: an opened drawer laid on the page --- */
 .overlay {
   position: fixed;
   inset: 0;
@@ -274,250 +138,240 @@ body {
 .overlay-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(14, 8, 5, 0.74);
-  backdrop-filter: blur(2px);
-  animation: fade 200ms ease;
+  background: rgba(244, 240, 228, 0.74);
+  backdrop-filter: blur(1px);
+  animation: fade 160ms ease;
 }
 
 .tray {
   position: relative;
-  width: min(94vw, 1120px);
-  max-height: 90vh;
+  width: min(93vw, 1080px);
+  max-height: 88vh;
   display: flex;
   flex-direction: column;
-  border-radius: 6px;
-  padding: 0 0 18px;
-  background-color: #241207;
-  background-image:
-    linear-gradient(180deg, rgba(255, 218, 178, 0.05), rgba(0, 0, 0, 0.45)),
-    var(--wood);
-  background-size: auto, 1220px 760px;
-  background-position: center, center bottom;
-  background-repeat: no-repeat;
-  box-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.5),
-    0 2px 0 rgba(255, 235, 205, 0.06) inset,
-    0 40px 80px rgba(0, 0, 0, 0.7);
-  animation: rise 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  background: var(--paper);
+  animation: rise 200ms ease;
+}
+.tray::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--grain);
+  background-size: 160px 160px;
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+  pointer-events: none;
+}
+.tray-ink {
+  position: absolute;
+  inset: -12px;
+  width: calc(100% + 24px);
+  height: calc(100% + 24px);
+  overflow: visible;
+  pointer-events: none;
 }
 
 .tray-head {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  gap: 14px;
-  padding: 14px 18px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  gap: 16px;
+  padding: 16px 22px 8px;
 }
 .tray-label {
-  padding: 6px 16px;
-  border-radius: 3px;
-  background-image: linear-gradient(180deg, var(--brass-hi), var(--brass-mid) 48%,
-    var(--brass-lo) 52%, var(--brass-mid) 100%);
-  color: #2e2410;
-  font-size: 17px;
-  font-variant: small-caps;
-  letter-spacing: 0.08em;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 240, 200, 0.4) inset;
+  font-family: var(--ink-hand);
+  font-weight: 700;
+  font-size: 30px;
+  color: var(--graphite);
 }
 .tray-close {
   appearance: none;
   border: 0;
+  background: transparent;
   cursor: pointer;
-  padding: 7px 16px;
-  border-radius: 3px;
-  font: inherit;
-  font-size: 13px;
-  font-variant: small-caps;
-  letter-spacing: 0.08em;
-  color: #f0e6cf;
-  background-image: linear-gradient(180deg, #4c331f, #2a1810);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(255, 235, 205, 0.08) inset;
+  font-family: var(--ink-hand);
+  font-size: 19px;
+  color: var(--graphite-soft);
+  padding: 4px 8px;
+  text-decoration: underline wavy var(--graphite-soft);
 }
-.tray-close:hover { color: #fff; }
-.tray-close:focus-visible { outline: 2px solid var(--brass-hi); outline-offset: 2px; }
+.tray-close:hover { color: var(--graphite); }
+.tray-close:focus-visible { outline: 2px dashed var(--graphite-soft); outline-offset: 2px; }
 
 .tray-cards {
   display: flex;
   flex-wrap: wrap;
-  gap: 22px 20px;
+  gap: 26px 22px;
   justify-content: center;
-  padding: 26px 20px 8px;
+  padding: 14px 22px 26px;
   overflow-y: auto;
 }
 
 .tray-empty {
-  color: #b8a888;
-  font-size: 15px;
-  font-variant: small-caps;
-  letter-spacing: 0.06em;
-  padding: 30px;
+  font-family: var(--ink-hand);
+  font-size: 22px;
+  color: var(--graphite-soft);
+  padding: 34px;
 }
 
-/* --- Reference card (flips) --- */
+/* --- Reference card --- */
 .rcard {
   appearance: none;
   border: 0;
   background: transparent;
   padding: 0;
+  margin: 0;
   cursor: pointer;
-  width: 252px;
-  height: 366px;
-  perspective: 1000px;
+  width: 250px;
+  height: 344px;
+  perspective: 1100px;
   font: inherit;
-  text-align: left;
 }
-.rcard:focus-visible { outline: 2px solid var(--brass-hi); outline-offset: 4px; border-radius: 4px; }
+.rcard:focus-visible { outline: 2px dashed var(--graphite-soft); outline-offset: 5px; }
 
 .rcard-inner {
   display: block;
   position: relative;
   width: 100%;
   height: 100%;
-  transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 460ms cubic-bezier(0.34, 1.2, 0.5, 1);
   transform-style: preserve-3d;
 }
 .rcard.is-flipped .rcard-inner { transform: rotateY(180deg); }
 
-.rcard-front,
-.rcard-back {
+.rcard-face {
   position: absolute;
   inset: 0;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  border-radius: 3px;
-  background: var(--card-paper);
-  color: var(--card-ink);
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(0, 0, 0, 0.18);
+  background: #faf7ee;
   overflow: hidden;
 }
-
-/* Front — post-it on a ruled index card */
-.rcard-front {
-  padding: 0 0 16px;
-  background-image:
-    linear-gradient(var(--card-paper), var(--card-paper)),
-    repeating-linear-gradient(180deg, transparent 0 27px, rgba(70, 90, 130, 0.14) 27px 28px);
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-.rcard-front::before {
-  content: "";
+.rcard-ink {
   position: absolute;
-  left: 26px;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: rgba(190, 70, 70, 0.3);
+  inset: -10px;
+  width: calc(100% + 20px);
+  height: calc(100% + 20px);
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* Front — a ruled index card with a post-it */
+.rcard-front {
+  padding: 40px 20px 20px;
+  background-image:
+    repeating-linear-gradient(180deg, transparent 0 28px, rgba(90, 110, 150, 0.13) 28px 29px);
+  background-position: 0 44px;
 }
 .postit {
-  position: relative;
-  margin: 16px 14px 0;
-  padding: 12px 12px 14px;
-  background: var(--postit);
-  border-bottom: 2px solid var(--postit-edge);
-  transform: rotate(-1.4deg);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.28);
-}
-.postit::after {
-  content: "";
   position: absolute;
-  left: 50%;
-  top: -7px;
-  width: 46px;
-  height: 14px;
-  transform: translateX(-50%) rotate(2deg);
-  background: rgba(255, 255, 255, 0.35);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  top: -8px;
+  left: 14px;
+  right: 18px;
+  min-height: 92px;
+  padding: 16px 16px 14px;
+  transform: rotate(-2.2deg);
+}
+.postit-ink {
+  position: absolute;
+  inset: -8px;
+  width: calc(100% + 16px);
+  height: calc(100% + 16px);
+  overflow: visible;
+  pointer-events: none;
 }
 .postit-text {
   display: block;
-  font-size: 12.5px;
-  line-height: 1.28;
-  color: #5a4a1c;
+  position: relative;
+  font-family: var(--ink-hand);
   font-weight: 600;
+  font-size: 20px;
+  line-height: 1.15;
+  color: #5b4a1f;
 }
 .rcard-hint {
   position: absolute;
+  right: 14px;
   bottom: 10px;
-  right: 12px;
-  font-size: 10px;
-  font-variant: small-caps;
-  letter-spacing: 0.1em;
-  color: #9a8f7a;
+  font-family: var(--ink-hand);
+  font-size: 15px;
+  color: #a99f8c;
 }
 
 /* Back — the detail */
 .rcard-back {
   transform: rotateY(180deg);
-  padding: 0;
   display: flex;
   flex-direction: column;
+  padding: 16px 16px 14px;
+  gap: 9px;
 }
 .rcard-media {
-  flex: 0 0 auto;
-  height: 116px;
-  background: #201812;
+  height: 98px;
+  border: 0;
+  background: #efe9da;
   display: grid;
   place-items: center;
   overflow: hidden;
+  flex: 0 0 auto;
 }
-.rcard-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rcard-media img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(0.92); }
 .rcard-media .noimg {
-  font-size: 10px;
-  font-variant: small-caps;
-  letter-spacing: 0.12em;
-  color: #7c7060;
+  font-family: var(--ink-hand);
+  font-size: 16px;
+  color: #a99f8c;
 }
 .rcard-fields {
   flex: 1 1 auto;
-  padding: 12px 14px 14px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-.rc-line { font-size: 12px; line-height: 1.4; }
+.rc-line { display: block; font-family: var(--ink-body); font-size: 13.5px; line-height: 1.4; color: #4a443c; }
 .rc-key {
   display: block;
-  font-size: 9px;
-  font-variant: small-caps;
-  letter-spacing: 0.14em;
-  color: #9a8b74;
-  margin-bottom: 1px;
+  font-family: var(--ink-hand);
+  font-size: 15px;
+  color: var(--graphite-soft);
 }
-.rc-source { color: #4a4030; }
-.rc-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
+.rc-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 3px; }
 .rc-tag {
   appearance: none;
-  border: 1px solid rgba(0, 0, 0, 0.18);
-  background: #ece3cf;
-  color: #4a3a28;
-  font: inherit;
-  font-size: 10.5px;
-  font-variant: small-caps;
-  letter-spacing: 0.05em;
-  padding: 2px 7px;
-  border-radius: 999px;
+  border: 0;
+  background: transparent;
   cursor: pointer;
+  font-family: var(--ink-hand);
+  font-size: 15px;
+  color: var(--graphite);
+  padding: 1px 4px;
+  text-decoration: underline wavy rgba(107, 100, 92, 0.6);
 }
-.rc-tag:hover { background: #ddd0b2; }
-.rc-tag:focus-visible { outline: 2px solid var(--brass-mid); outline-offset: 1px; }
+.rc-tag:hover { color: #1f1c19; }
+.rc-tag:focus-visible { outline: 2px dashed var(--graphite-soft); outline-offset: 1px; }
+
+/* Fallback if rough.js is unavailable — plain thin lines, still usable. */
+.no-ink .drawer-label,
+.no-ink .postit { background: #faf7ef; }
+.no-ink .drawer { border: 1px solid var(--graphite); }
+.no-ink .drawer-label { padding: 3px 6px; }
+.no-ink .postit { border: 1px solid var(--graphite); }
+.no-ink .tray { border: 1px solid var(--graphite); }
+.no-ink .rcard-face { border: 1px solid var(--graphite); }
 
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes rise {
-  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  from { opacity: 0; transform: translateY(14px); }
   to { opacity: 1; transform: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .drawer-face, .rcard-inner { transition: none; }
+  .rcard-inner, .drawer { transition: none; }
   .overlay-backdrop, .tray { animation: none; }
 }
 
 @media (max-width: 640px) {
-  .rcard { width: 214px; height: 340px; }
-  .tray-cards { gap: 18px 14px; padding: 20px 12px 6px; }
-  .rcard-media { height: 96px; }
+  .rcard { width: 214px; height: 300px; }
+  .tray-cards { gap: 20px 16px; padding: 12px 14px 20px; }
+  .tray-label { font-size: 25px; }
 }
