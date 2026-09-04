@@ -1,13 +1,15 @@
-/* Stage 1 — deliberately plain. No wood, no brass. Just legible structure. */
+/* Stage 1 — deliberately plain. Verifying data flow, not design.
+   Stage 2 layers the drawn card-catalog visuals on top of this markup. */
 
 :root {
   --bg: #ffffff;
-  --ink: #1a1a1a;
-  --muted: #666;
-  --line: #ddd;
-  --accent: #1a1a1a;
+  --ink: #1b1b1b;
+  --muted: #6a6a6a;
+  --line: #dcdcdc;
+  --accent: #1b1b1b;
+  --chip: #f0f0f0;
   --warn-bg: #fff8e1;
-  --warn-ink: #8a6d00;
+  --warn-ink: #7a5d00;
 }
 
 * { box-sizing: border-box; }
@@ -16,107 +18,150 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-.page {
-  max-width: 760px;
+#app {
+  max-width: 780px;
   margin: 0 auto;
-  padding: 32px 20px 80px;
+  padding: 24px 20px 96px;
 }
 
-.page-head h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: 0.02em; }
-.sub { margin: 0 0 24px; color: var(--muted); font-size: 14px; }
-
-.section-title,
-h2.section-title {
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-  margin: 0 0 10px;
+/* top bar */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  min-height: 30px;
 }
+.brand { font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.back {
+  font-size: 14px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.back:hover { text-decoration: underline; }
 
-/* Filters */
-.filters { display: flex; flex-wrap: wrap; gap: 8px; }
-
-.filter {
+.langswitch { display: flex; gap: 4px; }
+.lang {
   font: inherit;
-  font-size: 13px;
-  padding: 5px 10px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  padding: 4px 8px;
   border: 1px solid var(--line);
   background: #fff;
-  color: var(--ink);
+  color: var(--muted);
   border-radius: 3px;
   cursor: pointer;
 }
-.filter:hover { border-color: var(--ink); }
-.filter.is-active { background: var(--accent); color: #fff; border-color: var(--accent); }
-.filter.is-empty { color: #aaa; }
+.lang:hover { border-color: var(--ink); color: var(--ink); }
+.lang.is-active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-.meta {
-  margin: 22px 0 12px;
-  font-size: 12px;
-  color: var(--muted);
-}
-
-/* List */
-.list { display: flex; flex-direction: column; gap: 16px; }
-
-.card {
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.card-head {
-  padding: 8px 12px;
-  background: #fafafa;
-  border-bottom: 1px solid var(--line);
-}
-.card-label { font-size: 14px; font-weight: 600; }
-
-.card-body { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
-
-.card-fig { margin: 0; }
-.card-fig img { max-width: 100%; height: auto; display: block; border: 1px solid var(--line); }
-
-.card-source, .card-note { margin: 0; font-size: 14px; }
-.card-source { color: var(--muted); }
-
-.field-label {
-  display: inline-block;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #999;
-  margin-right: 2px;
-}
-
-.card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
-.tag {
-  font: inherit;
-  font-size: 12px;
-  padding: 3px 8px;
-  border: 1px solid var(--line);
-  background: #fff;
-  border-radius: 999px;
-  color: var(--muted);
-  cursor: pointer;
-}
-.tag:hover { border-color: var(--ink); color: var(--ink); }
-.tag.is-active { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-.empty { color: var(--muted); font-size: 14px; }
-
-/* Warnings */
+/* warnings */
 .warnings {
   background: var(--warn-bg);
   color: var(--warn-ink);
-  border: 1px solid #f0e0a0;
+  border: 1px solid #f0e2a8;
   border-radius: 4px;
-  padding: 10px 14px;
-  margin-bottom: 20px;
+  padding: 8px 12px;
+  margin-bottom: 18px;
   font-size: 13px;
 }
-.warnings ul { margin: 6px 0 0; padding-left: 18px; }
+.warnings summary { cursor: pointer; font-weight: 600; }
+.warnings ul { margin: 8px 0 2px; padding-left: 20px; }
+
+/* filters */
+.filters { display: flex; flex-wrap: wrap; gap: 7px; }
+.filter {
+  font-size: 13px;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.filter:hover { border-color: var(--ink); }
+.filter.is-active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.filter.is-empty { color: #b0b0b0; }
+
+.count { margin: 20px 0 12px; font-size: 12px; color: var(--muted); }
+
+/* list */
+.list { display: flex; flex-direction: column; gap: 12px; }
+.card {
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 12px 14px;
+  text-decoration: none;
+  color: var(--ink);
+}
+.card:hover { border-color: var(--ink); }
+.card-title { display: block; font-weight: 600; font-size: 15px; }
+.card-meta { display: block; margin-top: 3px; font-size: 13px; color: var(--muted); }
+.card-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.chip {
+  font-size: 11px;
+  padding: 2px 7px;
+  background: var(--chip);
+  border-radius: 999px;
+  color: var(--muted);
+}
+
+.empty { color: var(--muted); font-size: 14px; }
+
+/* note page */
+.note { max-width: 640px; }
+.note-title { font-size: 20px; margin: 4px 0 6px; }
+.note-sub { margin: 0 0 20px; font-size: 13px; color: var(--muted); }
+
+.note-image {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  margin-bottom: 22px;
+  overflow: hidden;
+}
+.note-image img { display: block; width: 100%; height: auto; }
+.note-image.is-empty {
+  display: grid;
+  place-items: center;
+  min-height: 160px;
+  color: #b0b0b0;
+  font-size: 13px;
+  background: repeating-linear-gradient(45deg, #fafafa 0 10px, #f4f4f4 10px 20px);
+}
+
+.note-h {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+  margin: 0 0 6px;
+}
+.note-desc, .note-tags { margin-bottom: 22px; }
+.note-body { margin: 0; font-size: 15px; }
+.note-body.is-empty { color: var(--muted); }
+.note-fallback {
+  margin: 0 0 6px;
+  font-size: 12px;
+  color: var(--warn-ink);
+  background: var(--warn-bg);
+  border: 1px solid #f0e2a8;
+  border-radius: 3px;
+  padding: 4px 8px;
+}
+
+.tag-row { display: flex; flex-wrap: wrap; gap: 7px; }
+.tag-link {
+  font-size: 13px;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.tag-link:hover { border-color: var(--ink); }
+
+.note-source a { font-size: 14px; color: var(--ink); }
