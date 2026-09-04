@@ -1,4 +1,5 @@
-/* Stage 2 — hand-drawn card catalog. Pencil + coloured-pencil, no skeuomorphism. */
+/* Stage 2 — hand-drawn cut-paper card catalog. Pencil + coloured pencil,
+   wood-tone palette, no skeuomorphism. Wired to the Stage 1 data model. */
 
 :root {
   --design-w: 1001px;
@@ -8,30 +9,55 @@
   --paper-deep: #e5d8bf;
   --graphite: #4b3a28;
   --graphite-soft: #7a6446;
+  --kraft-note: #e7d3a4;
   --ink-hand: "Caveat", "Kalam", "Bradley Hand", cursive;
   --ink-body: "Kalam", "Caveat", "Comic Sans MS", cursive;
 
-  /* Faint paper tooth, tiled. */
   --grain:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 
 * { box-sizing: border-box; }
 
-html, body {
-  margin: 0;
-  height: 100%;
-  overflow: hidden;
-}
-
+html, body { margin: 0; height: 100%; }
 body {
   background: var(--paper);
   color: var(--graphite);
   font-family: var(--ink-body);
   -webkit-font-smoothing: antialiased;
+  overflow: hidden;
 }
+body:has(.notepage:not([hidden])) { overflow: auto; }
 
-/* --- Sketchbook page --- */
+/* ---------- language switch (always on top) ---------- */
+.langswitch {
+  position: fixed;
+  top: 12px;
+  right: 16px;
+  z-index: 30;
+  display: flex;
+  gap: 10px;
+}
+.lang {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--ink-hand);
+  font-size: 18px;
+  line-height: 1;
+  color: var(--graphite-soft);
+  padding: 2px 2px;
+}
+.lang:hover { color: var(--graphite); }
+.lang.is-active {
+  color: var(--graphite);
+  text-decoration: underline wavy var(--graphite);
+  text-underline-offset: 3px;
+}
+.lang:focus-visible { outline: 2px dashed var(--graphite-soft); outline-offset: 2px; }
+
+/* ---------- sketchbook page + cabinet ---------- */
 .room {
   position: fixed;
   inset: 0;
@@ -39,6 +65,7 @@ body {
   background:
     radial-gradient(130% 90% at 50% 30%, #f4ecd9 0%, var(--paper) 55%, var(--paper-deep) 100%);
 }
+.room[hidden] { display: none; }
 .room::before {
   content: "";
   position: absolute;
@@ -69,7 +96,6 @@ body {
   pointer-events: none;
 }
 
-/* --- Drawer grid: always 4 x 4, scaled as one unit, never re-flows --- */
 .drawers {
   position: absolute;
   inset: 0;
@@ -82,19 +108,14 @@ body {
 
 .drawer {
   position: relative;
-  appearance: none;
-  border: 0;
-  padding: 0;
-  margin: 0;
-  background: transparent;
-  font: inherit;
+  display: block;
+  text-decoration: none;
   color: inherit;
   cursor: pointer;
   transform: rotate(var(--rot, 0deg));
   transition: transform 160ms ease, filter 160ms ease;
   filter: drop-shadow(2px 3.5px 2.5px rgba(58, 42, 26, 0.2));
 }
-/* cut-paper lift on hover / open — soft, no hard edge */
 .drawer:hover {
   transform: rotate(var(--rot, 0deg)) translateY(-3px) scale(1.02);
   filter: drop-shadow(3px 7px 5px rgba(58, 42, 26, 0.26));
@@ -103,9 +124,7 @@ body {
   transform: rotate(var(--rot, 0deg)) translateY(-3px) scale(1.02);
   outline: none;
 }
-.drawer.is-open {
-  transform: rotate(var(--rot, 0deg)) translateY(-2px) scale(1.03);
-}
+.drawer.is-open { transform: rotate(var(--rot, 0deg)) translateY(-2px) scale(1.03); }
 
 .drawer-ink {
   position: absolute;
@@ -115,26 +134,23 @@ body {
   overflow: visible;
   pointer-events: none;
 }
-
 .drawer-label {
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%) rotate(var(--tilt, -1deg));
-  width: 90%;
+  transform: translate(-50%, -52%) rotate(var(--tilt, -1deg));
+  width: 88%;
   text-align: center;
   font-family: var(--ink-hand);
   font-weight: 600;
-  font-size: 20px;
-  line-height: 1.0;
+  font-size: 16.5px;
+  line-height: 1.05;
   color: var(--graphite);
-  letter-spacing: 0.01em;
   pointer-events: none;
 }
-
 .drawer:focus-visible .drawer-label { text-decoration: underline wavy var(--graphite-soft); }
 
-/* --- Overlay: an opened drawer laid on the page --- */
+/* ---------- opened drawer (tray) ---------- */
 .overlay {
   position: fixed;
   inset: 0;
@@ -143,19 +159,17 @@ body {
   place-items: center;
 }
 .overlay[hidden] { display: none; }
-
 .overlay-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(244, 240, 228, 0.74);
+  background: rgba(244, 240, 228, 0.78);
   backdrop-filter: blur(1px);
   animation: fade 160ms ease;
 }
-
 .tray {
   position: relative;
-  width: min(93vw, 1080px);
-  max-height: 88vh;
+  width: min(93vw, 1060px);
+  max-height: 86vh;
   display: flex;
   flex-direction: column;
   background: transparent;
@@ -170,7 +184,6 @@ body {
   overflow: visible;
   pointer-events: none;
 }
-
 .tray-head {
   position: relative;
   z-index: 1;
@@ -178,7 +191,7 @@ body {
   align-items: baseline;
   justify-content: space-between;
   gap: 16px;
-  padding: 16px 22px 8px;
+  padding: 16px 24px 8px;
 }
 .tray-label {
   font-family: var(--ink-hand);
@@ -199,18 +212,16 @@ body {
 }
 .tray-close:hover { color: var(--graphite); }
 .tray-close:focus-visible { outline: 2px dashed var(--graphite-soft); outline-offset: 2px; }
-
 .tray-cards {
   position: relative;
   z-index: 1;
   display: flex;
   flex-wrap: wrap;
-  gap: 26px 22px;
+  gap: 24px 20px;
   justify-content: center;
-  padding: 14px 22px 26px;
+  padding: 12px 22px 26px;
   overflow-y: auto;
 }
-
 .tray-empty {
   font-family: var(--ink-hand);
   font-size: 22px;
@@ -218,40 +229,20 @@ body {
   padding: 34px;
 }
 
-/* --- Reference card --- */
+/* ---------- a reference card (links to its note page) ---------- */
 .rcard {
-  appearance: none;
-  border: 0;
-  background: transparent;
-  padding: 0;
-  margin: 0;
-  cursor: pointer;
-  width: 250px;
-  height: 372px;
-  perspective: 1100px;
-  font: inherit;
-}
-.rcard:focus-visible { outline: 2px dashed var(--graphite-soft); outline-offset: 5px; }
-
-.rcard-inner {
-  display: block;
   position: relative;
-  width: 100%;
-  height: 100%;
-  transition: transform 460ms cubic-bezier(0.34, 1.2, 0.5, 1);
-  transform-style: preserve-3d;
+  display: block;
+  width: 240px;
+  min-height: 250px;
+  padding: 40px 18px 16px;
+  text-decoration: none;
+  color: var(--graphite);
+  cursor: pointer;
+  transition: transform 130ms ease;
 }
-.rcard.is-flipped .rcard-inner { transform: rotateY(180deg); }
-
-.rcard-face {
-  position: absolute;
-  inset: 0;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  background: transparent;
-  overflow: hidden;
-}
-.no-ink .rcard-face { background: #faf7ee; }
+.rcard:hover { transform: translateY(-3px) rotate(-0.5deg); }
+.rcard:focus-visible { outline: 2px dashed var(--graphite-soft); outline-offset: 5px; }
 .rcard-ink {
   position: absolute;
   z-index: 0;
@@ -261,22 +252,14 @@ body {
   overflow: visible;
   pointer-events: none;
 }
-.rcard-face > .rcard-media,
-.rcard-face > .rcard-fields { position: relative; z-index: 1; }
-.rcard-face > .postit,
-.rcard-face > .rcard-hint { z-index: 1; }
-
-/* Front — a ruled index card with a post-it */
-.rcard-front {
-  padding: 40px 20px 20px;
-}
 .postit {
   position: absolute;
-  top: -8px;
-  left: 14px;
-  right: 18px;
-  min-height: 92px;
-  padding: 16px 16px 14px;
+  z-index: 1;
+  top: -12px;
+  left: 12px;
+  right: 16px;
+  min-height: 76px;
+  padding: 14px 14px 12px;
   transform: rotate(-2.2deg);
 }
 .postit-ink {
@@ -288,97 +271,195 @@ body {
   pointer-events: none;
 }
 .postit-text {
-  display: block;
   position: relative;
+  display: block;
   font-family: var(--ink-hand);
   font-weight: 600;
-  font-size: 20px;
+  font-size: 19px;
   line-height: 1.15;
   color: #5a4326;
 }
-.rcard-hint {
-  position: absolute;
-  right: 14px;
-  bottom: 10px;
-  font-family: var(--ink-hand);
-  font-size: 15px;
-  color: #a99f8c;
-}
-
-/* Back — the detail */
-.rcard-back {
-  transform: rotateY(180deg);
-  display: flex;
-  flex-direction: column;
-  padding: 16px 16px 14px;
-  gap: 9px;
-}
-.rcard-media {
-  height: 84px;
-  border: 0;
-  background: #ece3cf;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  flex: 0 0 auto;
-}
-.rcard-media img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(0.92); }
-.rcard-media .noimg {
-  font-family: var(--ink-hand);
-  font-size: 16px;
-  color: #a99f8c;
-}
-.rcard-fields {
-  flex: 1 1 auto;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.rc-line { display: block; font-family: var(--ink-body); font-size: 13.5px; line-height: 1.4; color: #4a443c; }
-.rc-key {
+.rcard-info {
+  position: relative;
+  z-index: 1;
   display: block;
+  margin-top: 52px;
+}
+.rc-source {
+  display: block;
+  font-family: var(--ink-body);
+  font-size: 13px;
+  line-height: 1.4;
+  color: #5c5140;
+}
+.rc-date {
+  display: block;
+  margin-top: 4px;
   font-family: var(--ink-hand);
   font-size: 15px;
   color: var(--graphite-soft);
 }
-.rc-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 3px; }
-.rc-tag {
-  appearance: none;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  font-family: var(--ink-hand);
-  font-size: 15px;
-  color: var(--graphite);
-  padding: 1px 4px;
-  text-decoration: underline wavy rgba(107, 100, 92, 0.6);
-}
-.rc-tag:hover { color: #1f1c19; }
-.rc-tag:focus-visible { outline: 2px dashed var(--graphite-soft); outline-offset: 1px; }
 
-/* Fallback if rough.js is unavailable — plain thin lines, still usable. */
-.no-ink .drawer-label,
-.no-ink .postit { background: #faf7ef; }
+/* ---------- note page ---------- */
+.notepage {
+  position: relative;
+  z-index: 15;
+  min-height: 100%;
+  background:
+    radial-gradient(130% 80% at 50% 0%, #f4ecd9 0%, var(--paper) 60%, var(--paper-deep) 100%);
+  padding: 56px 18px 80px;
+}
+.notepage[hidden] { display: none; }
+.notepage::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: var(--grain);
+  background-size: 160px 160px;
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.note-sheet {
+  position: relative;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 30px 34px 40px;
+}
+.note-ink {
+  position: absolute;
+  z-index: 0;
+  inset: -14px;
+  width: calc(100% + 28px);
+  height: calc(100% + 28px);
+  overflow: visible;
+  pointer-events: none;
+}
+.note-inner { position: relative; z-index: 1; }
+
+.note-back {
+  display: inline-block;
+  font-family: var(--ink-hand);
+  font-size: 18px;
+  color: var(--graphite-soft);
+  text-decoration: underline wavy var(--graphite-soft);
+  text-underline-offset: 3px;
+  margin-bottom: 16px;
+}
+.note-back:hover { color: var(--graphite); }
+
+.note-title {
+  font-family: var(--ink-hand);
+  font-weight: 700;
+  font-size: 33px;
+  line-height: 1.15;
+  margin: 0;
+  color: var(--graphite);
+}
+.squiggle { display: block; width: 100%; height: 10px; margin: 2px 0 10px; overflow: visible; }
+
+.note-sub {
+  margin: 0 0 22px;
+  font-family: var(--ink-body);
+  font-size: 13px;
+  color: var(--graphite-soft);
+}
+
+.note-image {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 200px;
+  margin-bottom: 26px;
+  overflow: hidden;
+}
+.note-image img { position: relative; z-index: 1; width: 100%; height: auto; display: block; }
+.frame-ink {
+  position: absolute;
+  z-index: 0;
+  inset: -8px;
+  width: calc(100% + 16px);
+  height: calc(100% + 16px);
+  overflow: visible;
+  pointer-events: none;
+}
+.note-image-label {
+  position: relative;
+  z-index: 1;
+  font-family: var(--ink-hand);
+  font-size: 18px;
+  color: var(--graphite-soft);
+}
+
+.note-h {
+  font-family: var(--ink-hand);
+  font-weight: 700;
+  font-size: 21px;
+  color: var(--graphite-soft);
+  margin: 22px 0 6px;
+}
+.note-body {
+  margin: 0;
+  font-family: var(--ink-body);
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: #47402f;
+}
+.note-body.is-empty { color: var(--graphite-soft); }
+.note-fallback {
+  margin: 0 0 8px;
+  padding: 6px 10px;
+  font-family: var(--ink-body);
+  font-size: 12.5px;
+  color: #6a5326;
+  background: var(--kraft-note);
+  border-radius: 2px;
+}
+
+.note-tags { display: flex; flex-wrap: wrap; gap: 8px 14px; }
+.tag-link {
+  font-family: var(--ink-hand);
+  font-size: 17px;
+  color: var(--graphite);
+  text-decoration: underline wavy rgba(107, 100, 92, 0.7);
+  text-underline-offset: 3px;
+}
+.tag-link:hover { color: #1f1c19; }
+
+.note-source { margin: 22px 0 0; }
+.note-source a {
+  font-family: var(--ink-hand);
+  font-size: 18px;
+  color: var(--graphite);
+  text-decoration: underline wavy var(--graphite-soft);
+  text-underline-offset: 3px;
+}
+
+/* ---------- fallback if rough.js is unavailable ---------- */
+.no-ink .drawer-label, .no-ink .postit { background: #faf7ef; }
 .no-ink .drawer { border: 1px solid var(--graphite); }
 .no-ink .drawer-label { padding: 3px 6px; }
 .no-ink .postit { border: 1px solid var(--graphite); }
-.no-ink .tray { border: 1px solid var(--graphite); }
-.no-ink .rcard-face { border: 1px solid var(--graphite); }
+.no-ink .tray { border: 1px solid var(--graphite); background: var(--paper); }
+.no-ink .rcard { border: 1px solid var(--graphite); background: #faf7ee; }
+.no-ink .note-sheet { border: 1px solid var(--graphite); background: #faf7ee; }
+.no-ink .note-image { border: 1px dashed var(--graphite); }
 
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes rise {
   from { opacity: 0; transform: translateY(14px); }
   to { opacity: 1; transform: none; }
 }
-
 @media (prefers-reduced-motion: reduce) {
-  .rcard-inner, .drawer { transition: none; }
+  .drawer, .rcard { transition: none; }
   .overlay-backdrop, .tray { animation: none; }
 }
 
 @media (max-width: 640px) {
-  .rcard { width: 214px; height: 330px; }
-  .tray-cards { gap: 20px 16px; padding: 12px 14px 20px; }
+  .rcard { width: 210px; min-height: 226px; }
+  .tray-cards { gap: 18px 14px; padding: 10px 14px 20px; }
   .tray-label { font-size: 25px; }
+  .note-sheet { padding: 24px 20px 32px; }
+  .note-title { font-size: 28px; }
 }
