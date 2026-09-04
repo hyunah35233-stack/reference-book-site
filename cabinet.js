@@ -315,14 +315,6 @@
       if (w && h) {
         drawSized(ink, w, h, function (p) {
           cutPaper(p, w, h, { seed: seed, fill: CARD_PAPER, grow: 4, jit: 2, strokeWidth: 1.05 });
-          var rr = rng(seed + 61);
-          for (var ln = 0; ln < 4; ln++) {
-            var ly = 168 + ln * 24 + (rr() * 3 - 1.5);
-            if (ly > h - 12) break;
-            p.line(16, ly, w - 14, ly + (rr() * 3 - 1.5), {
-              roughness: 2.4, bowing: 1.2, stroke: RULE_BLUE, strokeWidth: 0.6, seed: seed + ln,
-            });
-          }
         }, 12);
       }
       var pi = card.querySelector(".postit-ink");
